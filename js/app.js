@@ -13,6 +13,8 @@ $(function () {
   // Default objects:
   app.purchases = [];
   app.perfumesCollection;
+  app.genres = ['women', 'men', 'kids'];
+  app.perfumeGenres = soma.template.create(document.getElementById('perfumeGenres'));
 
 
   //==============================
@@ -44,7 +46,6 @@ $(function () {
       return app[template] = soma.template.create(document.getElementById(template));
   });
 
-
   //=================================
   // Define a template helper.
   // Capitalize first letter of word:
@@ -58,10 +59,13 @@ $(function () {
 
 
   //================================================================
-  // Define a method to get the genre of perfume (men, women, kids).
+  // Set up genres for inital page load. This will be used to
+  // filter perfumes based on which genre the user selects.
+  // Define a method to get the genre of perfume (ladies, men, kids).
   // This filters the genre from the total perfumes object.
   // Then renders the template on the next screen with that genre.
   //================================================================
+  app.perfumeGenres.scope.genres = ['ladies', 'men', 'kids'];
   app.perfumeGenres.scope.getGenre = function(item) {
     var title = app.perfumesGenreTitle.scope.title = item.target.getAttribute('data-title');
     var perfumeGenre = item.target.getAttribute('data-genre');
@@ -69,7 +73,7 @@ $(function () {
     var whichPerfumes = app.perfumesCollection.filter(function(item) {
       return item.genre === perfumeGenre;
     })
-    app.available_perfumes.scope.selectedGenre = whichPerfumes[0].data;
+    app.available_perfumes.scope.selectedGenre = whichPerfumes;
     //==========================================
     // Update the template for the chosen genre:
     //==========================================
@@ -181,5 +185,5 @@ $(function () {
     // Reset the shopping cart:
     app.cart.scope.purchases = [];
     app.cart.render();
-  });   
+  });  
 });
