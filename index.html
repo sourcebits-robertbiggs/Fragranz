@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Fragranž</title>  
+    <link href="images/apple-touch-icon-120x120.png" sizes="120x120" rel="apple-touch-icon">
+    <link href="images/apple-touch-icon-114x114.png" sizes="114x114" rel="apple-touch-icon">
+    <link href="images/apple-touch-startup-image-640x1096.png" rel="apple-touch-startup-image" sizes="640x1096">
+    <link href="images/apple-touch-startup-image-640x920.png" media="(device-width: 320px) and (device-height: 480px) and (-webkit-device-pixel-ratio: 2)" rel="apple-touch-startup-image">
+    <link rel="stylesheet" href="chui/chui-ios-3.5.5.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script type='text/javascript' src='chui/jquery-2.1.1.min.js'></script>
+    <script type='text/javascript' src='chui/chui-3.5.5.js'></script>
+    <script src="js/soma-template.js"></script>
+  </head>
+  <body>
+  <nav class='current'>
+    <h1 id='mainTitle'>Fragranž</h1>
+  </nav>
+  <article id='main' class='current'>
+    <section>
+      <h2 class='wrap normal-case'>Choose from one of the categories below to see which fragrances are available.</h2>
+      <ul class='list' id='perfumeGenres'>
+        <li class='nav data-cloak' data-singletap='getGenre()' data-goto='perfumeList' data-genre='{{perfume.genre}}' data-title='{{capitalize(perfume.genre)}}' data-repeat="perfume in perfumesCollection">
+          <h3>{{capitalize(perfume.genre)}}</h3>
+        </li>
+      </ul>
+      <div id='fragranz_small' class='horizontal centered'>
+        <img src='images/fragranz_small.png'>
+      </div>
+    </section>
+  </article>  
+   
+  <nav class='next'>
+    <a href='#' class='button back'>Perfumes</a>
+    <h1 id='perfumesGenreTitle'>{{title}}</h1>
+  </nav>
+  <article class='next' id='perfumeList'>
+    <section>
+      <ul class='list' id='available_perfumes'>
+        <li data-sku='{{perfume.sku}}' data-singletap='getChosenPerfume()' class='comp' data-repeat='perfume in selectedGenre' data-goto='detail'>
+          <aside>
+            <img width='60' data-src='{{perfume.img_prev}}'>
+          </aside>
+          <div>
+            <h3 class='productTitle'>{{perfume.product_title}}</h3>
+            <h4>{{perfume.sku}}</h4>
+            <h4>{{perfume.short_description}}</h4>
+          </div>
+          <aside>
+            <span class='counter'>${{perfume.wholesale_price}}</span>
+            <span class='show-detail'></span>
+          </aside>
+        </li>
+      </ul>
+    </section>
+  </article>
+  <nav class='next' id='detailNavbar'>
+    <a href='#' class='button back' id='backToGenre'>{{chosenPerfume.product_title}}</a>
+    <h1 id='detailTitle'>{{chosenPerfume.product_title}}</h1>
+  </nav>
+  <article class='next' id='detail'>
+    <section>
+      <ul class='list' id='perfumeDetail'>
+        <li>
+          <img data-src="{{chosenPerfume.img_prev}}">
+          <h3 class="productTitle">{{chosenPerfume.product_title}}</h3>
+          <h4><span class="sku">SKU: {{chosenPerfume.sku}}</span> </h4>
+          <h4 class="counter flush">${{chosenPerfume.wholesale_price}}</h4>
+          <p class="longDescription">{{chosenPerfume.long_description}}</p>
+        </li>
+      </ul>
+    </section>
+  </article>
+  <div class='toolbar next'>
+    <a href="javascript:void(null)" id='addToCart' data-singletap='cart.addToCart()' class="button add"></a>
+    <a href="javascript:void(null)" data-disabled="{{disabled}}" id="shoppingCart" class="button align-flush"></a>
+  </div>
+  <nav class="next">
+    <a href='#' class='button back' id='backToPerfume'>{{perfumeName}}</a>
+    <h1>Cart</h1>
+  </nav>
+  <article id="cart" class="next">
+    <section>
+      <h2>Your Purchase:</h2>
+      <ul class="list" id="purchaseItems">
+        <li class='comp' data-repeat="item in purchases">
+          <div>
+            <h3>{{item.product_title}}</h3>
+            <h4>SKU: {{item.sku}}</h4>
+          </div>
+          <aside><p>Price: ${{item.wholesale_price}}</p></aside>
+          
+        </li>
+      </ul>
+      <h2>Total:</h2>
+      <ul class="list">
+        <li class='comp'>
+          <div><h3>Total Items:</h3></div>
+          <aside><h4 id="totalItems">{{getTotalItems()}}</h4></aside>
+        </li>
+        <li class='comp'>
+          <div><h3>Total Cost:</h3></div>
+          <aside><h4 id="totalCost">${{getTotalCost()}}</h4></aside>
+        </li>
+      </ul>
+      <div id='orderButtons'>
+        <a id="placeOrder" href="#" class="button action">Place Order</a>
+        <a id="cancelOrder" href="#" class="button action">Cancel Order</a>
+      </div>
+    </section>
+  </article>
+  <nav class="next">
+    <a href='#' class='button back' id='backToCart'>Cart</a>
+    <h1>Confirmation</h1>
+  </nav>
+  <article id="confirmation" class="next">
+    <section>
+      <ul class="list">
+        <li>
+          <h3>Your Order Was Successful!</h3>
+          <h4>Confirmation number: <span id="confirmationNum"></span></h4>
+        </li>
+      </ul>
+      <h2>Purchase Details:</h2>
+      <ul class="list">
+        <li data-repeat="item in purchases">
+          <h3>{{item.genreTitle}}: {{item.product_title}}</h3>
+        </li>
+      </ul>
+      <h2>Total Amount Charged:</h2>
+      <ul class="list">
+        <li>
+          <h3><span id="confirmTotalCost">${{getTotalCost()}}</span></h3>
+        </li>
+      </ul>
+    </section>
+  </article>
+    <script type='text/javascript' src='js/app.js'></script>
+  </body>
+</html>
