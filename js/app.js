@@ -13,8 +13,6 @@ $(function () {
   // Default objects:
   app.purchases = [];
   app.perfumesCollection;
-  app.genres = ['women', 'men', 'kids'];
-  app.perfumeGenres = soma.template.create(document.getElementById('perfumeGenres'));
 
 
   //==============================
@@ -66,17 +64,24 @@ $(function () {
   // Then renders the template on the next screen with that genre.
   //================================================================
   app.perfumeGenres.scope.genres = ['ladies', 'men', 'kids'];
+  
   app.perfumeGenres.scope.getGenre = function(item) {
     var title = app.perfumesGenreTitle.scope.title = item.target.getAttribute('data-title');
     var perfumeGenre = item.target.getAttribute('data-genre');
+    //===================================
+    // Update the title of the next view:
+    //===================================
     app.perfumesGenreTitle.render();
+    //=============================================
+    // Filter the data based on the user selection:
+    //=============================================
     var whichPerfumes = app.perfumesCollection.filter(function(item) {
       return item.genre === perfumeGenre;
     })
     app.available_perfumes.scope.selectedGenre = whichPerfumes;
-    //==========================================
-    // Update the template for the chosen genre:
-    //==========================================
+    //===============================================
+    // Update the next template for the chosen genre:
+    //===============================================
     app.available_perfumes.render();
     app.available_perfumes.scope.children = $('#available_perfumes').children();
   };
