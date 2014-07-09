@@ -15,15 +15,15 @@ $(function () {
   app.perfumesCollection;
 
 
-  //==============================
-  // Get the data to be displayed:
-  //==============================
-
-  $.getJSON('data/perfumes.json', function(data) {
-    // Make acquired data available to templates:
-    app.perfumesCollection = app.perfumeGenres.scope.perfumesCollection = data;
-    // Render first template:
-    app.perfumeGenres.render();
+  //=================================
+  // Define a template helper.
+  // Capitalize first letter of word:
+  //=================================
+  soma.template.helpers({
+    capitalize : function ( str ) {
+      if (!str) return;
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
   });
 
 
@@ -40,24 +40,26 @@ $(function () {
   // thus enabling calling them later by name
   // without having to define them individually.
   //============================================== 
-  app.perfumeGenres = soma.template.create(document.getElementById('perfumeGenres'));
-  app.perfumesGenreTitle = soma.template.create(document.getElementById('perfumesGenreTitle'));
-  app.available_perfumes = soma.template.create(document.getElementById('available_perfumes'));
-  app.detailNavbar = soma.template.create(document.getElementById('detailNavbar'));
-  app.perfumeDetail = soma.template.create(document.getElementById('perfumeDetail'));
-  app.backToPerfume = soma.template.create(document.getElementById('backToPerfume'));
-  app.cart = soma.template.create(document.getElementById('cart'));
-  app.confirmation = soma.template.create(document.getElementById('confirmation'));
+  app.perfumeGenres = soma.template.create($('#perfumeGenres')[0]);
+  app.perfumesGenreTitle = soma.template.create($('#perfumesGenreTitle')[0]);
+  app.available_perfumes = soma.template.create($('#available_perfumes')[0]);
+  app.detailNavbar = soma.template.create($('#detailNavbar')[0]);
+  app.perfumeDetail = soma.template.create($('#perfumeDetail')[0]);
+  app.backToPerfume = soma.template.create($('#backToPerfume')[0]);
+  app.cart = soma.template.create($('#cart')[0]);
+  app.confirmation = soma.template.create($('#confirmation')[0]);
 
-  //=================================
-  // Define a template helper.
-  // Capitalize first letter of word:
-  //=================================
-  soma.template.helpers({
-    capitalize : function ( str ) {
-      if (!str) return;
-      return str.charAt(0).toUpperCase() + str.slice(1);
-    }
+
+
+  //==============================
+  // Get the data to be displayed:
+  //==============================
+
+  $.getJSON('data/perfumes.json', function(data) {
+    // Make acquired data available to templates:
+    app.perfumesCollection = app.perfumeGenres.scope.perfumesCollection = data;
+    // Render first template:
+    app.perfumeGenres.render();
   });
 
 
@@ -163,12 +165,27 @@ $(function () {
     app.backToPerfume.render();
   });
 
+
   //====================
   // View Shopping Cart:
   //====================
+
+  // Popup for when cart is empty:
+  app.cartIsEmpty = function() {
+    $.UIPopup({
+      id: "warning",
+      title: 'Empty Cart!', 
+      cancelButton: 'Close', 
+      message: 'The shopping cart is empty. Add some items using the "+" button on the lower left.'
+    });
+  };
+
   $('#shoppingCart').on('singletap', function() {
-    // If shopping cart is empty, do nothing:
-    if (!app.cart.scope.purchases.length) return;
+    // If shopping cart is empty, show popup message:
+    if (!app.cart.scope.purchases.length) {
+      app.cartIsEmpty();
+      return;
+    }
     // Otherwise, go to cart view:
     $.UIGoToArticle('#cart');
   });
