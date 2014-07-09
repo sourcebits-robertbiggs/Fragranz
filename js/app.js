@@ -40,9 +40,14 @@ $(function () {
   // thus enabling calling them later by name
   // without having to define them individually.
   //============================================== 
-  ['perfumesGenreTitle', 'available_perfumes', 'perfumeGenres', 'detailNavbar', 'perfumeDetail', 'backToPerfume', 'cart','confirmation'].forEach(function(template) {
-      return app[template] = soma.template.create(document.getElementById(template));
-  });
+  app.perfumeGenres = soma.template.create(document.getElementById('perfumeGenres'));
+  app.perfumesGenreTitle = soma.template.create(document.getElementById('perfumesGenreTitle'));
+  app.available_perfumes = soma.template.create(document.getElementById('available_perfumes'));
+  app.detailNavbar = soma.template.create(document.getElementById('detailNavbar'));
+  app.perfumeDetail = soma.template.create(document.getElementById('perfumeDetail'));
+  app.backToPerfume = soma.template.create(document.getElementById('backToPerfume'));
+  app.cart = soma.template.create(document.getElementById('cart'));
+  app.confirmation = soma.template.create(document.getElementById('confirmation'));
 
   //=================================
   // Define a template helper.
