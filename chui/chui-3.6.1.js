@@ -3,19 +3,23 @@
    6  /\
      /OO\
     /OOOO\
-  /OOOOOOOO\
- ((OOOOOOOO))
-  \:~=++=~:/
+   /OOOOOO\
+  (OOOOOOOO)
+   \:~==~:/
 
 ChocolateChip-UI
 ChUI.js
 Copyright 2014 Sourcebits www.sourcebits.com
 License: MIT
-Version: 3.5.5
+Version: 3.6.1
 */
+window.CHUIJSLIB;
+if(window.jQuery) {
+  window.CHUIJSLIB = window.jQuery;
+} else if (window.$chocolatechipjs) {
+  window.CHUIJSLIB = window.$chocolatechipjs;
+}
 (function($) {
-  'use strict';
-
 
   $.extend({
     ///////////////
@@ -31,7 +35,6 @@ Version: 3.5.5
     concat : function ( args ) {
       return (args instanceof Array) ? args.join('') : [].slice.apply(arguments).join('');
     },
-
     ////////////////////////////
     // Version of each that uses
     // regular parameter order:
@@ -39,16 +42,13 @@ Version: 3.5.5
     forEach : function ( obj, callback, args ) {
       function isArraylike( obj ) {
         var length = obj.length,
-          type = jQuery.type( obj );
-
-        if ( type === "function" || jQuery.isWindow( obj ) ) {
+          type = typeof obj;
+        if ( type === "function" || obj === window ) {
           return false;
         }
-
         if ( obj.nodeType === 1 && length ) {
           return true;
         }
-
         return type === "array" || length === 0 ||
           typeof length === "number" && length > 0 && ( length - 1 ) in obj;
       } 
@@ -56,12 +56,10 @@ Version: 3.5.5
       i = 0,
       length = obj.length,
       isArray = isArraylike( obj );
-
       if ( args ) {
         if ( isArray ) {
           for ( ; i < length; i++ ) {
             value = callback.apply( obj[ i ], args );
-
             if ( value === false ) {
               break;
             }
@@ -69,19 +67,16 @@ Version: 3.5.5
         } else {
           for ( i in obj ) {
             value = callback.apply( obj[ i ], args );
-
             if ( value === false ) {
               break;
             }
           }
         }
-
       // A special, fast, case for the most common use of each
       } else {
         if ( isArray ) {
           for ( ; i < length; i++ ) {
             value = callback.call( obj[ i ], obj[ i ], i );
-
             if ( value === false ) {
               break;
             }
@@ -89,7 +84,6 @@ Version: 3.5.5
         } else {
           for ( i in obj ) {
             value = callback.call( obj[ i ], obj[ i ], i );
-
             if ( value === false ) {
               break;
             }
@@ -100,26 +94,44 @@ Version: 3.5.5
   });
 
   $.fn.extend({
+    
+    ///////////////////////////////////
+    // forEach method for jQuery to
+    // preserve normal parameter order.
+    ///////////////////////////////////
+    forEach : function( callback, args ) {
+      var $this = this;
+      return $.forEach( $this, callback, args );
+    },
+
     //////////////////////
     // Return element that 
     // matches selector:
     //////////////////////
     iz : function ( selector ) {
-      var ret = $();
-      this.forEach(function(ctx) {
-        if ($(ctx).is(selector)) {
-          ret.push(ctx);
-        }
-      });
-      return ret;
-    },
+      if (window.jQuery) {
+        var ret = $();
+        this.forEach(function(ctx) {
+          if ($(ctx).is(selector)) {
+            ret.push(ctx);
+          }
+        });
+        return ret;
 
+      } else if (window.$chocolatechipjs) {
+        return this.is(selector);
+      }
+    },
     //////////////////////////////
     // Return element that doesn't 
     // match selector:
     //////////////////////////////
     iznt : function ( selector ) {
-      return this.not(selector);
+      if (window.jQuery) {
+        return this.not(selector);
+      } else if (window.$chocolatechipjs) {
+        return this.isnt(selector);
+      }
     },
  
     ///////////////////////////////////
@@ -135,80 +147,99 @@ Version: 3.5.5
     // don't match selector:
     ///////////////////////////////////
     haznt : function ( selector ) {
-      var ret = $();
-      this.forEach(function(ctx) {
-        if (!$(ctx).has(selector)[0]) {
-          ret.push(ctx);
-        }
-      });
-      return ret;
+      if (window.jQuery) {
+        var ret = $();
+        this.forEach(function(ctx) {
+          if (!$(ctx).has(selector)[0]) {
+            ret.push(ctx);
+          }
+        });
+        return ret;        
+      } else if (window.$chocolatechipjs) {
+        return this.hasnt(selector);
+      }
     },
-
     //////////////////////////////////////
     // Return element that has class name:
     //////////////////////////////////////
     hazClass : function ( className ) {
-      var ret = $();
-      this.forEach(function(ctx) {
-        if ($(ctx).hasClass(className)) {
-          ret.push(ctx);
-        }
-      });
-      return ret;
+      if (window.jQuery) {
+        var ret = $();
+        this.forEach(function(ctx) {
+          if ($(ctx).hasClass(className)) {
+            ret.push(ctx);
+          }
+        });
+        return ret;
+      } else if(window.$chocolatechipjs) {
+        return this.hasClass(className);
+      }
     },
-
     //////////////////////////////
     // Return element that doesn't 
     // have class name:
     //////////////////////////////
     hazntClass : function ( className ) {
-      var ret = $();
-      this.forEach(function(ctx) {
-        if (!$(ctx).hasClass(className)) {
-          ret.push(ctx);
-        }
-      });
-      return ret;
+      if (window.jQuery) {
+        var ret = $();
+        this.forEach(function(ctx) {
+          if (!$(ctx).hasClass(className)) {
+            ret.push(ctx);
+          }
+        });
+        return ret;
+      } else if (window.$chocolatechipjs) {
+        var ret = [];
+        this.forEach(function(ctx) {
+          if (ctx.classList.contains(className)) {
+            ret.push(ctx);
+          }
+        })
+        return ret;
+      }
     },
-
     /////////////////////////////////////
     // Return element that has attribute:
     /////////////////////////////////////
     hazAttr : function ( property ) {
-      var ret = $();
-      this.forEach(function(ctx){
-        if ($(ctx).attr(property)) {
-          ret.push(ctx);
-        }
-      });
-      return ret;
-    },
+      if (window.jQuery) {
+        var ret = $();
+        this.forEach(function(ctx){
+          if ($(ctx).attr(property)) {
+            ret.push(ctx);
+          }
+        });
+        return ret;
+      } else if (window.$chocolatechipjs) {
+        var ret = []
 
+        return ret;
+      }
+    },
     //////////////////////////
     // Return element that 
     // doesn't have attribute:
     //////////////////////////
     hazntAttr : function ( property ) {
-      var ret = $();
-      this.forEach(function(ctx){
-        if (!$(ctx).attr(property)) {
-          ret.push(ctx);
-        }
-      });
-      return ret;
-    },
-
-    ////////////////////////////
-    // Version of each that uses
-    // regular parameter order:
-    ////////////////////////////
-    forEach : function ( callback, args ) {
-      return $.forEach( this, callback, args );
+      if (window.jQuery) {
+        var ret = $();
+        this.forEach(function(ctx){
+          if (!$(ctx).attr(property)) {
+            ret.push(ctx);
+          }
+        });
+        return ret;
+      } else if (window.$chocolatechipjs) {
+        var ret = []
+          if (!ctx.hasAttribute(property)){
+            ret.push(ctx);
+          }
+        return ret;        
+      }
     }
   });
 
- 
- 
+
   $.extend({
     eventStart : null,
     eventEnd : null,
@@ -249,8 +280,7 @@ Version: 3.5.5
     }
   });
 
- 
- 
+
   $.extend({
     isiPhone : /iphone/img.test(navigator.userAgent),
     isiPad : /ipad/img.test(navigator.userAgent),
@@ -277,14 +307,7 @@ Version: 3.5.5
   });
 
 
-  //////////////////////////////////
-  // Flag if native Android browser:
-  //////////////////////////////////
-  if ((/android/img.test(navigator.userAgent)) && (/webkit/img.test(navigator.userAgent) ) && (!/Chrome/img.test(navigator.userAgent))) {
-    document.body.classList.add('isNativeAndroidBrowser');
-  }
-
-  'use strict';
+  
   /////////////////////////////
   // Determine browser version:
   /////////////////////////////
@@ -306,6 +329,10 @@ Version: 3.5.5
     // os-specific styles:
     ////////////////////////////////
     $.body = $('body');
+  
+    if ((/android/img.test(navigator.userAgent)) && (/webkit/img.test(navigator.userAgent) ) && (!/Chrome/img.test(navigator.userAgent))) {
+      $.body.addClass('isNativeAndroidBrowser');
+    }
     if ($.isWin) {
       $.body.addClass('isWindows');
     } else if ($.isiOS) {
@@ -333,16 +360,13 @@ Version: 3.5.5
   var longTapDelay = 750;
   var singleTapDelay = 150;
   var longTapTimeout;
-
   function parentIfText(node) {
     return 'tagName' in node ? node : node.parentNode;
   }
-
   function swipeDirection(x1, x2, y1, y2) {
     return Math.abs(x1 - x2) >=
     Math.abs(y1 - y2) ? (x1 - x2 > 0 ? 'left' : 'right') : (y1 - y2 > 0 ? 'up' : 'down');
   }
-
   function longTap() {
     longTapTimeout = null;
     if (touch.last) {
@@ -354,12 +378,10 @@ Version: 3.5.5
       } catch(err) { }
     }
   }
-
   function cancelLongTap() {
     if (longTapTimeout) clearTimeout(longTapTimeout);
     longTapTimeout = null;
   }
-
   function cancelAll() {
     if (touchTimeout) clearTimeout(touchTimeout);
     if (tapTimeout) clearTimeout(tapTimeout);
@@ -368,7 +390,6 @@ Version: 3.5.5
     touchTimeout = tapTimeout = swipeTimeout = longTapTimeout = null;
     touch = {};
   }
-
   $(function(){
     var now;
     var delta;
@@ -448,10 +469,8 @@ Version: 3.5.5
           }
         }
       }
-
       if ($.isAndroid) {
         $.gestureLength = 10;
-
         if (!!touch.el) {
           // Swipe detection:
           if ((touch.x2 && Math.abs(touch.x1 - touch.x2) > $.gestureLength) ||
@@ -464,18 +483,14 @@ Version: 3.5.5
                 touch = {};
               }
             }, 0);
-
           // Normal tap:
           } else if ('last' in touch) {
-
             // Delay by one tick so we can cancel the 'tap' event if 'scroll' fires:
             tapTimeout = setTimeout(function() {
-
             // Trigger universal 'tap' with the option to cancelTouch():
             if (touch && touch.el) {
               touch.el.trigger('tap');
             }
-
             // Trigger double tap immediately:
             if (touch && touch.isDoubleTap) {
               if (touch && touch.el) {
@@ -493,12 +508,10 @@ Version: 3.5.5
               }
               }, singleTapDelay);
             }
-
             }, 0);
           }
         } else { return; }  
       }
-
     });
     body.on($.eventEnd, function(e) {
       if (window.navigator.msPointerEnabled) {
@@ -520,18 +533,14 @@ Version: 3.5.5
               touch = {};
             }
           }, 0);
-
         // Normal tap:
         } else if ('last' in touch) {
-
           // Delay by one tick so we can cancel the 'tap' event if 'scroll' fires:
           tapTimeout = setTimeout(function() {
-
             // Trigger universal 'tap' with the option to cancelTouch():
             if (touch && touch.el) {
               touch.el.trigger('tap');
             }
-
             // Trigger double tap immediately:
             if (touch && touch.isDoubleTap) {
               if (touch && touch.el) {
@@ -549,15 +558,12 @@ Version: 3.5.5
                 }
               }, singleTapDelay);
             }
-
           }, 0);
         }
       } else { return; }
     });
     body.on('touchcancel', cancelAll);
-
   });
-
   ['swipe', 'swipeleft', 'swiperight', 'swipeup', 'swipedown', 'doubletap', 'tap', 'singletap', 'longtap'].forEach(function(method){ 
     // Add gesture events to ChocolateChipJS:
     $.fn.extend({
@@ -580,12 +586,10 @@ Version: 3.5.5
       }
     }
   });
-
   $(function() {
     $.UIDesktopCompat();
   });
 
- 
 
   $(function() { 
     $.body = $('body');
@@ -621,6 +625,26 @@ Version: 3.5.5
     // of their corresponding articles:
     //////////////////////////////////////////
     $('.toolbar').prev('article').addClass('has-toolbar');
+
+    if ($.isiOS && $.isStandalone) {
+      $.body[0].classList.add('isStandalone');
+    }
+  });
+
+
+  /////////////////////////
+  // Hide and show navbars:
+  /////////////////////////
+  $.extend({    
+    UIHideNavBar : function () {
+      $('nav').hide();
+      $.body.addClass('hide-navbars');
+    },
+
+    UIShowNavBar : function () {
+      $('nav').show();
+      $.body.removeClass('hide-navbars')
+    }
   });
 
 
@@ -684,7 +708,6 @@ Version: 3.5.5
     } else if ('-webkit-transition' in document.body.style){
       transition = '-webkit-transition-duration';
     }
-
     function determineDurationType (duration) {
       if (/m/.test(duration)) {
         return parseFloat(duration); 
@@ -692,14 +715,12 @@ Version: 3.5.5
         return parseFloat(duration) * 100;
       }
     }
-
     tansitionDuration = determineDurationType($('article').eq(0).css(transition));
     
     setTimeout(function() {
       $(target).trigger({type: 'navigationend'});
     }, tansitionDuration);
   }
-
   $.extend({
     ////////////////////////////////////////////////
     // Manage location.hash for client side routing:
@@ -708,7 +729,6 @@ Version: 3.5.5
       url = url || true;
       $.UISetHashOnUrl($.UINavigationHistory[$.UINavigationHistory.length-1], delimiter);
     },
-
     /////////////////////////////////////////////////////
     // Set the hash according to where the user is going:
     /////////////////////////////////////////////////////
@@ -732,7 +752,6 @@ Version: 3.5.5
         window.history.replaceState('Object', 'Title', hash);
       }
     },
-
     //////////////////////////////////////
     // Navigate Back to Non-linear Article
     //////////////////////////////////////
@@ -757,7 +776,7 @@ Version: 3.5.5
       currentArticle[0].scrollTop = 0;
       destination[0].scrollTop = 0;
       if (prevArticles.length) {
-        $.each(prevArticles, function(_, ctx) {
+        $.forEach(prevArticles, function(ctx) {
           $(ctx).removeClass('previous').addClass('next');
           $(ctx).prev().removeClass('previous').addClass('next');
         });
@@ -774,7 +793,6 @@ Version: 3.5.5
       $.UISetHashOnUrl($.UINavigationHistory[$.UINavigationHistory.length-1]);
       triggerNavigationEvent(destination);
     },
-
     ////////////////////////////////////
     // Navigate Back to Previous Article
     ////////////////////////////////////
@@ -805,7 +823,6 @@ Version: 3.5.5
       $.UINavigationHistory.pop();
       triggerNavigationEvent(destination);
     },
-
     isNavigating : false,
   
     ///////////////////////////////
@@ -840,12 +857,9 @@ Version: 3.5.5
       setTimeout(function() {
         $.isNavigating = false;
       }, 500);
-
       triggerNavigationEvent(destination);
-
     }
   });
-
   ///////////////////
   // Init navigation:
   ///////////////////
@@ -856,11 +870,10 @@ Version: 3.5.5
     $.extend({
       UINavigationHistory : ["#" + $('article').eq(0).attr('id')]
     });
-
     ///////////////////////////////////////////////////////////
     // Make sure that navs and articles have navigation states:
     ///////////////////////////////////////////////////////////
-    $('nav:not(#global-nav)').each(function(idx, ctx) {
+    $('nav:not(#global-nav)').forEach(function(ctx, idx) {
       // Prevent if splitlayout for tablets:
       if ($('body')[0].classList.contains('splitlayout')) return;
       if (idx === 0) {
@@ -870,7 +883,7 @@ Version: 3.5.5
       }
     });
   
-    $('article').each(function(idx, ctx) {
+    $('article').forEach(function(ctx, idx) {
       // Prevent if splitlayout for tablets:
       if ($('body')[0].classList.contains('splitlayout')) return;
       if ($('body')[0].classList.contains('slide-out-app')) return;
@@ -880,7 +893,6 @@ Version: 3.5.5
         ctx.classList.add('next'); 
       }
     }); 
-
       ///////////////////////////
     // Initialize Back Buttons:
     ///////////////////////////
@@ -900,17 +912,16 @@ Version: 3.5.5
       if (!this.getAttribute('data-goto')) return;
       if (!document.getElementById(this.getAttribute('data-goto'))) return;
       if ($(this).parent()[0].classList.contains('deletable')) return;
-      $(destinationHref).addClass('navigable');
       $this.addClass('selected');
       var destinationHref = '#' + this.getAttribute('data-goto');
+      $(destinationHref).addClass('navigable');
       setTimeout(function() {
         $this.removeClass('selected');
       }, 500);
       var destination = $(destinationHref);
       $.UIGoToArticle(destination);
     });
-
-    $('li[data-goto]').each(function(idx, ctx) {
+    $('li[data-goto]').forEach(function(ctx) {
       $(ctx).closest('article').addClass('navigable');
       var navigable =  '#' + ctx.getAttribute('data-goto');
       $(navigable).addClass('navigable');
@@ -923,7 +934,6 @@ Version: 3.5.5
     if ($('article').eq(1)[0]) {
       $.UISetHashOnUrl($('article').eq(0)[0].id);
     }
-
     /////////////////////////////////////////////////////////
     // Stop rubber banding when dragging down on nav:
     /////////////////////////////////////////////////////////
@@ -932,8 +942,7 @@ Version: 3.5.5
     });
   });
 
- 
- 
+
   $(function() {
     ///////////////////////////////////
     // Initialize singletap on buttons:
@@ -942,6 +951,7 @@ Version: 3.5.5
       var $this = $(this);
       if ($this.parent('.segmented')[0]) return;
       if ($this.parent('.tabbar')[0]) return;
+      if ($.isDesktop) return;
       $this.addClass('selected');
       setTimeout(function() {
         $this.removeClass('selected');
@@ -949,8 +959,7 @@ Version: 3.5.5
     });
   });
 
- 
- 
+
   $.fn.extend({
     /////////////////////////
     // Block Screen with Mask
@@ -1100,7 +1109,6 @@ Version: 3.5.5
       var callback = options.callback || $.noop;
       var padding = options.empty ? ' noTitle' : '';
       var panelOpen, panelClose;
-
       var popup = $.concat('<div class="popup closed', padding, '" role="alertdialog" id="', id, '"><div class="panel">', title, message, '</div><footer>', cancelButton, continueButton, '</footer>', panelClose, '</div>');
     
       $('body').append(popup);
@@ -1142,7 +1150,6 @@ Version: 3.5.5
         }
     }
   });
-
   $.fn.extend({
     //////////////
     // Close Popup
@@ -1162,7 +1169,6 @@ Version: 3.5.5
         $(this).closest('.popup').UIPopupClose();
       }
     });
-
     /////////////////////////////////////////////////
     // Reposition popups on window resize:
     /////////////////////////////////////////////////
@@ -1171,7 +1177,7 @@ Version: 3.5.5
     });
   });
 
-  
+
   $.fn.extend({ 
     /////////////////
     // Create Popover
@@ -1215,7 +1221,6 @@ Version: 3.5.5
           popover.css({'left': left + 'px', 'top': (calcTop + 20) + 'px'});
         }
       };
-
       $(this).on($.eventStart, function() {
         if ($('.mask')[0]) {
           $.UIPopoverClose();
@@ -1251,7 +1256,6 @@ Version: 3.5.5
       });
     }
   });
-
   $.extend({
     ///////////////////////////////////////
     // Align the Popover Before Showing it:
@@ -1271,7 +1275,6 @@ Version: 3.5.5
       }
     }
   });
-
   $.extend({
     UIPopoverClose : function ( ) {
       $('body').UIUnblock();
@@ -1299,7 +1302,7 @@ Version: 3.5.5
     });
   });
 
- 
+
   $.fn.extend({
     ///////////////////////////////
     // Initialize Segmented Control
@@ -1311,11 +1314,10 @@ Version: 3.5.5
           callback: function() { alert('Boring!'); }
         }
       */
-      if (this.hasClass('paging')) return;
+      if ($(this).hazClass('paging').length) return;
       var callback = (options && options.callback) ? options.callback : $.noop;
-      var selected;
-      if (options && options.selected >= 0) selected = options.selected;
-      this.find('a').each(function(idx, ctx) {
+      var selected = (options && options.selected > 0) ? options.selected : 0;
+      this.find('a').forEach(function(ctx, idx) {
         $(ctx).find('a').attr('role','radio');
         if (idx === selected) {
           ctx.setAttribute('aria-checked', 'true');
@@ -1333,7 +1335,6 @@ Version: 3.5.5
       });
     }
   });
-
   $.extend({ 
     ///////////////////////////
     // Create Segmented Control
@@ -1343,7 +1344,8 @@ Version: 3.5.5
         options = {
           id : '#myId',
           className : 'special' || '',
-          labels : ['first','second','third']
+          labels : ['first','second','third'],
+          selected: 0
         }
       */
       var segmented;
@@ -1400,71 +1402,89 @@ Version: 3.5.5
     }
   });
 
- 
- 
+
   $.extend({
     ///////////////////////
     // Setup Paging Control
     ///////////////////////
-      UIPaging : function ( ) {
-        var currentArticle = $('.segmented.paging').closest('nav').next();
-        if ($('.segmented.paging').hasClass('horizontal')) {
-          currentArticle.addClass('horizontal');
-        } else if ($('.segmented.paging').hasClass('vertical')) {
-          currentArticle.addClass('vertical');
+    UIPaging : function ( ) {
+      var currentArticle = $('.segmented.paging').closest('nav').next();
+      if ($('.segmented.paging').hazClass('horizontal').length) {
+        currentArticle.addClass('horizontal');
+      } else if ($('.segmented.paging').hazClass('vertical').length) {
+        currentArticle.addClass('vertical');
+      }
+      
+      currentArticle.children().eq(0).addClass('current');
+      currentArticle.children().eq(0).siblings().addClass('next');
+      var sections = function() {
+        return currentArticle.children().length;
+      };
+      var pageBack = function($this) {
+        if (sections() === 1) return;
+        $this.next().removeClass('selected');
+        $this.addClass('selected');
+        var currentSection;
+        currentSection = $('section.current');
+        if (currentSection.index() === 0)  {
+          currentSection.removeClass('current');
+          currentArticle.children().eq(sections() - 1).addClass('current').removeClass('next');
+          currentArticle.children().eq(sections() - 1).siblings().removeClass('next').addClass('previous');
+        } else {
+          currentSection.removeClass('current').addClass('next');
+          currentSection.prev().removeClass('previous').addClass('current');
         }
-        
-        currentArticle.children().eq(0).addClass('current');
-        currentArticle.children().eq(0).siblings().addClass('next');
-        var sections = function() {
-          return currentArticle.children().length;
-        };
-
-        $('.segmented.paging').on($.eventStart, '.button:first-of-type', function() {
-          if (sections() === 1) return;
-          var $this = $(this);
-          $this.next().removeClass('selected');
-          $this.addClass('selected');
-          var currentSection;
-          currentSection = $('section.current');
-          if (currentSection.index() === 0)  {
-            currentSection.removeClass('current');
-            currentArticle.children().eq(sections() - 1).addClass('current').removeClass('next');
-            currentArticle.children().eq(sections() - 1).siblings().removeClass('next').addClass('previous');
-          } else {
-            currentSection.removeClass('current').addClass('next');
-            currentSection.prev().removeClass('previous').addClass('current');
-          }
-
-          setTimeout(function() {
-            $this.removeClass('selected');
-          }, 250);
+        setTimeout(function() {
+          $this.removeClass('selected');
+        }, 250);
+      };
+      var pageForward = function ($this) {
+        if (sections() === 1) return;
+        $this.prev().removeClass('selected');
+        $this.addClass('selected');
+        var currentSection;
+        if ($this[0].classList.contains('disabled')) return;
+        currentSection = $('section.current');
+        if (currentSection.index() === sections() - 1) {
+          // start again!
+          currentSection.removeClass('current');
+          currentArticle.children().eq(0).addClass('current').removeClass('previous');
+          currentArticle.children().eq(0).siblings().removeClass('previous').addClass('next');
+        } else {
+          currentSection.removeClass('current').addClass('previous');
+          currentSection.next().removeClass('next').addClass('current');
+        }
+        setTimeout(function() {
+          $this.removeClass('selected');
+        }, 250);
+      };
+      $('.segmented.paging').on($.eventStart, '.button:first-of-type', function() {
+        pageBack($(this));
+      });
+      $('.segmented.paging').on($.eventStart, '.button:last-of-type', function() {
+        pageForward($(this));
+      });
+      // Handle swipe gestures for paging:
+      if ($('article.paging.horizontal')[0]) {
+        $('article.paging').on('swiperight', function() {
+          pageBack($('.button:first-of-type'));
         });
-        $('.segmented.paging').on($.eventStart, '.button:last-of-type', function() {
-          if (sections() === 1) return;
-          var $this = $(this);
-          $this.prev().removeClass('selected');
-          $this.addClass('selected');
-          var currentSection;
-          if (this.classList.contains('disabled')) return;
-          currentSection = $('section.current');
-          if (currentSection.index() === sections() - 1) {
-            // start again!
-            currentSection.removeClass('current');
-            currentArticle.children().eq(0).addClass('current').removeClass('previous');
-            currentArticle.children().eq(0).siblings().removeClass('previous').addClass('next');
-          } else {
-            currentSection.removeClass('current').addClass('previous');
-            currentSection.next().removeClass('next').addClass('current');
-          }
-          setTimeout(function() {
-            $this.removeClass('selected');
-          }, 250);
+        $('article.paging').on('swipeleft', function() {
+          pageForward($('.button:last-of-type'));
         });
       }
+      if ($('article.paging.vertical')[0]) {
+        $('article.paging').on('swipeup', function() {
+          pageBack($('.button:first-of-type'));
+        });
+        $('article.paging').on('swipeudown', function() {
+          pageForward($('.button:last-of-type'));
+        });
+      }
+    }
   });
 
- 
+
   $.fn.extend({
     ////////////////////////////
     // Initialize Deletable List
@@ -1501,7 +1521,6 @@ Version: 3.5.5
       }
     }
   });
-
   $.extend({
     ////////////////////////////
     // Initialize Deletable List
@@ -1514,8 +1533,6 @@ Version: 3.5.5
           doneLabel : labelName || Done,
           deleteLabel : labelName || Delete,
           placement: left || right,
-          // To place the edit button in a toolbar:
-          toolbar: true || false,
           callback : callback
         }
       */
@@ -1542,7 +1559,7 @@ Version: 3.5.5
       }
       // Windows uses an icon for the delete button:
       if ($.isWin) deleteLabel = '';
-      var height = $('li').eq(1)[0].clientHeight;
+      var height = $('li').eq(0)[0].clientHeight;
       deleteButton = $.concat('<a href="javascript:void(null)" class="button delete">', deleteLabel, '</a>');
       editButton = $.concat('<a href="javascript:void(null)" class="button edit">', editLabel, '</a>');
       deletionIndicator = '<span class="deletion-indicator"></span>';
@@ -1552,20 +1569,16 @@ Version: 3.5.5
         }
       } else {
         if (!list[0].classList.contains('deletable')) {
-          if (options && options.toolbar) {
-            list.closest('article').next().append(editButton);
-            list.closest('article').next().find('.edit').addClass('align-flush');
-            button = list.closest('article').next().find('.edit');
-          } else {
-            list.closest('article').prev().append(editButton);
-            list.closest('article').prev().find('h1').addClass('buttonOnRight');
-            list.closest('article').prev().find('.edit').addClass('align-flush');
-            button = list.closest('article').prev().find('.edit');
-          }
+          list.closest('article').prev().append(editButton);
+          list.closest('article').prev().find('h1').addClass('buttonOnRight');
+          list.closest('article').prev().find('.edit').addClass('align-flush');
+          button = list.closest('article').prev().find('.edit');
+        } else {
+          button = list.closest('article').prev().find('.edit');
         }
       }
-      list.find('li').each(function(_, ctx) {
-        if (!$(ctx).has('.deletion-indicator')[0]) {
+      list.find('li').forEach(function(ctx) {
+        if (!$(ctx).has('.deletion-indicator').length) {
           $(ctx).prepend(deletionIndicator);
           $(ctx).append(deleteButton);
         }
@@ -1592,8 +1605,9 @@ Version: 3.5.5
               });            
             }
           });
+          $(list).off('singletap', '.deletion-indicator');
           $(list).on('singletap', '.deletion-indicator', function() {
-            if ($(this).parent('li').hasClass('selected')) {
+            if ($(this).parent('li').hazClass('selected').length) {
               $(this).parent('li').removeClass('selected');
               return;
             } else {
@@ -1624,7 +1638,6 @@ Version: 3.5.5
       return setupDeletability(callback, list, button);
     }
   });
-
 
 
   $.fn.extend({
@@ -1682,7 +1695,6 @@ Version: 3.5.5
   });
 
 
-
   $.extend({
     ///////////////////////////////////////////////
     // UISheet: Create an Overlay for Buttons, etc.
@@ -1709,7 +1721,6 @@ Version: 3.5.5
         $.UIHideSheet();
       });
     },
-
     UIShowSheet : function ( ) {
       $('article.current').addClass('blurred');
       if ($.isAndroid || $.isChrome) {
@@ -1721,7 +1732,6 @@ Version: 3.5.5
         $('.sheet').addClass('opened');
       }
     },
-
     UIHideSheet : function ( ) {
       $('.sheet').removeClass('opened');
       $('article.current').addClass('removeBlurSlow');
@@ -1795,7 +1805,6 @@ Version: 3.5.5
       }
     }
   });
-
   $.extend($.UISlideout, {
     /////////////////////////////////////////////////////////////////
     // Method to populate a slideout with actionable items.
@@ -1900,7 +1909,6 @@ Version: 3.5.5
       });
     }
   });
-
   $.extend({
     ///////////////////////////////////////////
     // Pass the id of the stepper to reset.
@@ -1916,7 +1924,6 @@ Version: 3.5.5
 
 
   $.fn.extend({
-
     ////////////////////////////
     // Initialize Switch Control
     ////////////////////////////
@@ -1967,7 +1974,6 @@ Version: 3.5.5
       });
     }
   });
-
   $.extend({
     ////////////////////////
     // Create Switch Control
@@ -1992,14 +1998,13 @@ Version: 3.5.5
       return $(_switch);
     }
   });
-
   $(function() {
     //////////////////////////
     // Handle Existing Switches:
     //////////////////////////
     $('.switch').UISwitch();
   });
- 
+
 
   document.addEventListener('touchstart', function (e) {
     var parent = e.target,
@@ -2057,38 +2062,33 @@ Version: 3.5.5
       $('nav').eq(selected).removeClass('next').addClass('current');
       $('article').removeClass('current').addClass('next');
       $('article').eq(selected-1).removeClass('next').addClass('current');
-      $('body').find('.tabbar').on('singletap', '.button', function() {
+      $('.tabbar').on('singletap', '.button', function() {
         var $this = this;
         var index;
         var id;
         $.publish('chui/navigate/leave', $('article.current')[0].id);
+
         $this.classList.add('selected');
-        $(this).siblings('a').removeClass('selected');
+        $($this).siblings('a').removeClass('selected');
         index = $(this).index();
         $('article.previous').removeClass('previous').addClass('next');
         $('nav.previous').removeClass('previous').addClass('next');
         $('article.current').removeClass('current').addClass('next');
         $('nav.current').removeClass('current').addClass('next');
-        id = $('article').eq(index)[0].id;
-        $.publish('chui/navigate/enter', id);
-        $('article').each(function(idx, ctx) {
-          $(ctx).scrollTop(0);
-        });
-      
-        $.UISetHashOnUrl('#'+id);
-        if ($.UINavigationHistory[0] === ('#' + id)) {
-          $.UINavigationHistory = [$.UINavigationHistory[0]];
-        } else if ($.UINavigationHistory.length === 1) {
-          if ($.UINavigationHistory[0] !== ('#' + id)) {
-            $.UINavigationHistory.push('#'+id);
-          }
-        } else if($.UINavigationHistory.length === 3) {
-          $.UINavigationHistory.pop();
-        } else {
-          $.UINavigationHistory[1] = '#'+id;
-        }
         $('article').eq(index).removeClass('next').addClass('current');
         $('nav').eq(index+1).removeClass('next').addClass('current');
+
+        id = $('article').eq(index)[0].id;
+        $.publish('chui/navigate/enter', id);
+        $('article').forEach(function(ctx) {
+          if (window.jQuery) {
+            $(ctx).scrollTop(0);
+          } else if (window.$chocolatechipjs) {
+            ctx.scrollTop = 0;
+          }
+        });
+        $.UISetHashOnUrl('#'+id);
+        $.UINavigationHistory = ['#'+id];
       });
     }
   });
@@ -2115,6 +2115,7 @@ Version: 3.5.5
       return template;
     }
   });
+
 
   /////////////////////////
   // Create a search input:
@@ -2179,8 +2180,9 @@ Version: 3.5.5
         })(),
         
         UICarousel = function ( options ) {
+          if (!options) return;
           var ul, li, className;
-          this.wrapper = typeof options.target === 'string' ? document.querySelector(options.target) : options.target;
+          this.carouselContainer = typeof options.target === 'string' ? document.querySelector(options.target) : options.target;
           this.options = {
             panels: options.panels || 3,
             snapThreshold: null,
@@ -2192,13 +2194,13 @@ Version: 3.5.5
           }
           // Include user's options:
           for (var i in options) this.options[i] = options[i];
-          this.wrapper.style.overflow = 'hidden';
-          this.wrapper.style.position = 'relative';
+          this.carouselContainer.style.overflow = 'hidden';
+          this.carouselContainer.style.position = 'relative';
           this.carouselPanels = [];
           ul = document.createElement('ul');
           ul.className = 'carousel-track';
           ul.style.cssText = 'position:relative;top:0;height:100%;width:100%;' + cssVendor + 'transition-duration:0;' + cssVendor + 'transform:translateZ(0);' + cssVendor + 'transition-timing-function:ease-out';
-          this.wrapper.appendChild(ul);
+          this.carouselContainer.appendChild(ul);
           this.track = ul;
           this.refreshSize();
           var whichPanelIndex;
@@ -2214,9 +2216,9 @@ Version: 3.5.5
           }
           className = this.carouselPanels[1].className;
           this.carouselPanels[1].className = !className ? 'carousel-panel-active' : className + ' carousel-panel-active';
-          this.wrapper.addEventListener(startEvent, this, false);
-          this.wrapper.addEventListener(moveEvent, this, false);
-          this.wrapper.addEventListener(endEvent, this, false);
+          this.carouselContainer.addEventListener(startEvent, this, false);
+          this.carouselContainer.addEventListener(moveEvent, this, false);
+          this.carouselContainer.addEventListener(endEvent, this, false);
           this.track.addEventListener(transitionEndEvent, this, false);
           var pagination;
           if (options.pagination) {
@@ -2229,7 +2231,11 @@ Version: 3.5.5
               }
               pagination.appendChild(li);
             }
-            $(this.wrapper).after(pagination);
+            if (window.$chocolatechipjs) {
+              this.carouselContainer.insertAdjacentElement('afterEnd', pagination)
+            } else {
+              $(this.carouselContainer).after(pagination);
+            }
           }
         };
       UICarousel.prototype = {
@@ -2239,25 +2245,25 @@ Version: 3.5.5
         customEvents: [],
         
         onSlide: function (fn) {
-          this.wrapper.addEventListener('carousel-panel-move', fn, false);
+          this.carouselContainer.addEventListener('carousel-panel-move', fn, false);
           this.customEvents.push(['move', fn]);
         },
         destroy: function () {
           while ( this.customEvents.length ) {
-            this.wrapper.removeEventListener('carousel-panel-' + this.customEvents[0][0], this.customEvents[0][1], false);
+            this.carouselContainer.removeEventListener('carousel-panel-' + this.customEvents[0][0], this.customEvents[0][1], false);
             this.customEvents.shift();
           }
           // Remove event listeners:
-          this.wrapper.removeEventListener(startEvent, this, false);
-          this.wrapper.removeEventListener(moveEvent, this, false);
-          this.wrapper.removeEventListener(endEvent, this, false);
+          this.carouselContainer.removeEventListener(startEvent, this, false);
+          this.carouselContainer.removeEventListener(moveEvent, this, false);
+          this.carouselContainer.removeEventListener(endEvent, this, false);
           this.track.removeEventListener(transitionEndEvent, this, false);
         },
         refreshSize: function () {
-          this.wrapperWidth = this.wrapper.clientWidth;
-          this.wrapperHeight = this.wrapper.clientHeight;
-          this.panelWidth = this.wrapperWidth;
-          this.maxX = -this.options.panels * this.panelWidth + this.wrapperWidth;
+          this.carouselContainerWidth = this.carouselContainer.clientWidth;
+          this.carouselContainerHeight = this.carouselContainer.clientHeight;
+          this.panelWidth = this.carouselContainerWidth;
+          this.maxX = -this.options.panels * this.panelWidth + this.carouselContainerWidth;
           this.snapThreshold = this.options.snapThreshold === null ?
             Math.round(this.panelWidth * 0.15) :
             /%/.test(this.options.snapThreshold) ?
@@ -2267,12 +2273,13 @@ Version: 3.5.5
         
         updatePanelCount: function (n) {
           this.options.panels = n;
-          this.maxX = -this.options.panels * this.panelWidth + this.wrapperWidth;
+          this.maxX = -this.options.panels * this.panelWidth + this.carouselContainerWidth;
         },
         
         goToPanel: function (p) {
           this.carouselPanels[this.currentPanel].className = this.carouselPanels[this.currentPanel].className.replace(/(^|\s)carousel-panel-active(\s|$)/, '');
           p = p < 0 ? 0 : p > this.options.panels-1 ? this.options.panels - 1 : p;
+          console.log('p: ' , p);
           this.panel = p;
           this.track.style[transitionDuration] = '0s';
           this.getPosition(-p * this.panelWidth);
@@ -2395,7 +2402,7 @@ Version: 3.5.5
           var panelMove;
           var pageFlipIndex;
           var className;
-          this.carouselPanels[this.currentPanel].className = this.carouselPanels[this.currentPanel].className.replace(/(^|\s)carousel-panel-active(\s|$)/, '');
+          this.carouselPanels[this.currentPanel].className = '';
           // Slide the panel:
           if (this.directionX > 0) {
             this.panel = -Math.ceil(this.x / this.panelWidth);
@@ -2418,6 +2425,9 @@ Version: 3.5.5
           className = this.carouselPanels[panelMove].className;
           pageFlipIndex = pageFlipIndex - Math.floor(pageFlipIndex / this.options.panels) * this.options.panels;
           $(this.carouselPanels[panelMove]).data('upcomingPanelIndex', pageFlipIndex);
+
+          //console.log('pageFlipIndex: ', pageFlipIndex)
+
           // Index to be loaded in the newly moved panel:
           var newX = -this.panel * this.panelWidth;
           this.track.style[transitionDuration] = Math.floor(500 * Math.abs(this.x - newX) / this.panelWidth) + 'ms';
@@ -2439,7 +2449,7 @@ Version: 3.5.5
         event: function (type) {
           var ev = document.createEvent("Event");
           ev.initEvent('carousel-panel-' + type, true, true);
-          this.wrapper.dispatchEvent(ev);
+          this.carouselContainer.dispatchEvent(ev);
         }
       };
       function prefixStyle (style) {
@@ -2472,22 +2482,22 @@ Version: 3.5.5
           panels: options.panels.length,
           loop: options.loop,
           pagination: options.pagination
-        }); 
+        });
         $(options.target).data('carousel', carousel);
         // Reverse array of data if RTL:
         if ($.isRTL) options.panels = reverseList(options.panels);
         var panel;
         // Load initial data:
         for (var i = 0; i < 3; i++) {
-          panel = i === 0 ? options.panels.length - 1 : i - 1;
-          carousel.carouselPanels[i].innerHTML = options.panels[panel];
+          panel = (i === 0) ? options.panels.length - 1 : i - 1;
+          carousel.carouselPanels[i].innerHTML = options.panels[Number(panel)];
         }
         var index = 0;
         var pagination = $(options.target).next('.pagination');
         carousel.onSlide(function () {
           for (var i = 0; i < 3; i++) {
             var upcoming = $(carousel.carouselPanels[i]).data('upcomingPanelIndex');
-            carousel.carouselPanels[i].innerHTML = options.panels[upcoming];
+            carousel.carouselPanels[i].innerHTML = options.panels[Number(upcoming)];
           }
           index = $('.carousel-panel-active').data('upcomingPanelIndex');
           pagination.find('li').removeClass('selected');
@@ -2504,8 +2514,8 @@ Version: 3.5.5
           }
         }); 
         $(options.target).on('mousedown', 'img', function() {return false;});
-        var width = $(options.target).width();
-        pagination.width(width);
+        var width = $(options.target).css('width');
+        pagination.css('width', width);
         pagination.on('click', 'li', function() {
           $(this).siblings('li').removeClass('selected');
           $(this).addClass('selected');
@@ -2533,7 +2543,6 @@ Version: 3.5.5
     });
   });
 
- 
 
   $.fn.extend({
     UIRange : function () {
@@ -2555,14 +2564,13 @@ Version: 3.5.5
     }
   });
   $(function() {
-    $('input[type=range]').each(function(_, ctx) {
+    $('input[type=range]').forEach(function(ctx) {
       $(ctx).UIRange();
     });
     $('body').on('input', 'input[type=range]', function() {
       $(this).UIRange();
     });
   });
-
 
 
   // Widget to enable styled select boxes (pickers):
@@ -2575,7 +2583,7 @@ Version: 3.5.5
           element.dispatchEvent(event);
       };
       if (!$.isDesktop && $.isiOS) {
-        $('.select-box-label').each(function(_, ctx) {
+        $('.select-box-label').forEach(function(ctx) {
           var label = $(ctx);
           var select = label.prev();
           if (!select[0].id) {
@@ -2596,7 +2604,7 @@ Version: 3.5.5
             element.dispatchEvent(event);
         };
         if (!$.isDesktop) {
-          $('.select-box-label').each(function(_, ctx) {
+          $('.select-box-label').forEach(function(ctx) {
             if (!ctx.id) {
               $(ctx).prev().attr('id', $.Uuid());
             }
@@ -2620,4 +2628,4 @@ Version: 3.5.5
     $.UISelectBox();
   });
 
-})(window.jQuery);
+})(window.CHUIJSLIB);

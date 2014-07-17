@@ -3,15 +3,15 @@
    6  /\
      /OO\
     /OOOO\
-  /OOOOOOOO\
- ((OOOOOOOO))
-  \:~=++=~:/
+   /OOOOOO\
+  (OOOOOOOO)
+   \:~==~:/
 
 ChocolateChip-UI
-ChUI.iOS.css
+ChUI-iOS.css
 Copyright 2014 Sourcebits www.sourcebits.com
 License: MIT
-Version: 3.5.5
+Version: 3.6.1
 */
 /* 
   Flex parameters:
@@ -56,7 +56,6 @@ h1,
   font-weight: 200;
   line-height: 1.1429;
   /* 64px when font-size is 42pt */
-
 }
 h2,
 .type-x-large {
@@ -64,7 +63,6 @@ h2,
   font-weight: 200;
   line-height: 1.2;
   /* 32px when font-size is 20pt */
-
 }
 h3,
 .type-large {
@@ -72,7 +70,6 @@ h3,
   font-weight: 600;
   line-height: 1.3636;
   /* 20px when font-size is 11pt */
-
 }
 h4,
 .type-medium,
@@ -83,7 +80,6 @@ samp {
   font-weight: 400;
   line-height: 1.3636;
   /* 20px when font-size is 11pt */
-
 }
 body,
 h5,
@@ -93,7 +89,6 @@ legend {
   font-weight: 300;
   line-height: 1.3636;
   /* 20px when font-size is 11pt */
-
 }
 h6,
 caption,
@@ -104,7 +99,6 @@ small,
   font-weight: 400;
   line-height: 1.6667;
   /* 20px when font-size is 9pt */
-
 }
 /* ==============================
    Article (view)
@@ -131,6 +125,15 @@ article {
   -webkit-box-align: start;
   -webkit-align-items: flex-start;
   align-items: flex-start;
+}
+.hide-navbars article {
+  top: 0;
+}
+.isStandalone article {
+  top: 65px;
+}
+.isStandalone .hide-navbars article {
+  top: 20px;
 }
 @media only screen and (min-width: 768px) {
   article {
@@ -322,7 +325,7 @@ nav > a.button {
   top: 3px;
 }
 .isDesktopSafari a.button.back {
-  margin-top: 0 !important;
+  margin-top: 8px !important;
 }
 .isiOS a.button.back,
 .isiOS a.button.backTo,
@@ -385,9 +388,9 @@ nav {
 nav > h1 {
   text-align: center;
   display: inline-block;
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  flex: 1;
+  -webkit-box-flex: 1 !important;
+  -webkit-flex: 1 !important;
+  flex: 1 !important;
   font: normal 12pt/14pt HelveticaNeue, Sans-serif;
   position: absolute;
   top: 0;
@@ -408,6 +411,13 @@ nav > h1 + a.button {
 nav > a.button + h1 {
   left: 120px;
   right: 120px;
+}
+.isStandalone nav {
+  top: 20px;
+}
+.isStandalone #global-nav {
+  height: 65px;
+  top: 0;
 }
 @media only screen and (max-device-width: 320px) and (orientation: portrait) {
   nav > a.button + h1 {
@@ -944,9 +954,9 @@ html[dir=rtl] .grid {
   -webkit-box-align: center;
   -webkit-align-items: center;
   align-items: center;
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  flex: 1;
+  -webkit-box-flex: 1 !important;
+  -webkit-flex: 1 !important;
+  flex: 1 !important;
   text-align: center;
 }
 .segmented:not(.paging) > .button:first-of-type {
@@ -1003,9 +1013,9 @@ html[dir=rtl] .segmented .button:last-of-type {
    =========================== */
 .segmented.paging,
 .segmented.paging.vertical {
-  -webkit-box-orient: horizontal;
-  -webkit-flex-direction: row;
-  flex-direction: row;
+  -webkit-box-orient: horizontal !important;
+  -webkit-flex-direction: row !important;
+  flex-direction: row !important;
 }
 .segmented.paging > .button,
 .segmented.paging.vertical > .button {
@@ -1018,6 +1028,7 @@ html[dir=rtl] .segmented .button:last-of-type {
   box-sizing: border-box;
   position: relative;
   border-radius: 0 !important;
+  border: none !important;
 }
 .isDesktop .segmented.paging > .button:hover,
 .isDesktop .segmented.paging.vertical > .button:hover,
@@ -1046,10 +1057,12 @@ html[dir=rtl] .segmented .button:last-of-type {
 .segmented.paging.horizontal > .button:last-of-type::before {
   -webkit-mask-image: url("data:image/svg+xml;utf8,%3Csvg%20version%3D'1.1'%20id%3D'svg2'%20xmlns%3Asvg%3D'http%3A//www.w3.org/2000/svg'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%20xmlns%3Axlink%3D'http%3A//www.w3.org/1999/xlink'%20x%3D'0px'%20y%3D'0px'%20width%3D'48px'%20height%3D'48px'%20viewBox%3D'0%200%2048%2048'%20enable-background%3D'new%200%200%2048%2048'%20xml%3Aspace%3D'preserve'%3E%3Cg%20id%3D'g4'%3E%3C/g%3E%3Cg%20id%3D'layer2'%3E%3Cpath%20id%3D'path7'%20d%3D'M15.946,37.911l-2.674-2.599l12.167-12.167L13.354,11.06l2.593-2.679L26.075,18.51l4.636,4.636l-4.636,4.636L15.946,37.911z'/%3E%3C/g%3E%3C/svg%3E");
 }
-.segmented.paging.vertical > .button:first-of-type::before {
+.segmented.paging.vertical > .button:first-of-type::before,
+html[dir=rtl] .segmented.paging.vertical > .button:last-of-type::before {
   -webkit-mask-image: url("data:image/svg+xml;utf8,%3Csvg%20version%3D'1.1'%20id%3D'svg2'%20xmlns%3Asvg%3D'http%3A//www.w3.org/2000/svg'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%20xmlns%3Axlink%3D'http%3A//www.w3.org/1999/xlink'%20x%3D'0px'%20y%3D'0px'%20width%3D'48px'%20height%3D'48px'%20viewBox%3D'0%200%2048%2048'%20enable-background%3D'new%200%200%2048%2048'%20xml%3Aspace%3D'preserve'%3E%3Cg%20id%3D'g4'%3E%3C/g%3E%3Cg%20id%3D'layer2'%3E%3Cpath%20id%3D'path7'%20d%3D'M7.227,17.101l2.599-2.674l12.167,12.167l12.086-12.086l2.679,2.593L26.628,27.229l-4.636,4.636l-4.636-4.636%20L7.227,17.101z'/%3E%3C/g%3E%3C/svg%3E");
 }
-.segmented.paging.vertical > .button:last-of-type::before {
+.segmented.paging.vertical > .button:last-of-type::before,
+html[dir=rtl] .segmented.paging.vertical > .button:first-of-type::before {
   -webkit-mask-image: url("data:image/svg+xml;utf8,%3Csvg%20version%3D'1.1'%20id%3D'svg2'%20xmlns%3Asvg%3D'http%3A//www.w3.org/2000/svg'%20xmlns%3D'http%3A//www.w3.org/2000/svg'%20xmlns%3Axlink%3D'http%3A//www.w3.org/1999/xlink'%20x%3D'0px'%20y%3D'0px'%20width%3D'48px'%20height%3D'48px'%20viewBox%3D'0%200%2048%2048'%20enable-background%3D'new%200%200%2048%2048'%20xml%3Aspace%3D'preserve'%3E%3Cg%20id%3D'g4'%3E%3C/g%3E%3Cg%20id%3D'layer2'%3E%3Cpath%20id%3D'path7'%20d%3D'M36.757,29.191l-2.599,2.674L21.992,19.698L9.905,31.784l-2.679-2.593l10.129-10.129l4.636-4.636l4.636,4.636%20L36.757,29.191z'/%3E%3C/g%3E%3C/svg%3E");
 }
 article.paging {
@@ -1178,16 +1191,16 @@ article.has-toolbar {
   bottom: 45px !important;
 }
 div.toolbar.current {
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 div.toolbar.next {
-  -webkit-transform: translate3d(101%, 0, 0);
-  transform: translate3d(101%, 0, 0);
+  -webkit-transform: translate3d(101%, 0, 0) !important;
+  transform: translate3d(101%, 0, 0) !important;
 }
 div.toolbar.previous {
-  -webkit-transform: translate3d(-101%, 0, 0);
-  transform: translate3d(-101%, 0, 0);
+  -webkit-transform: translate3d(-101%, 0, 0) !important;
+  transform: translate3d(-101%, 0, 0) !important;
 }
 html[dir=rtl] .splitlayout > .master + .toolbar {
   right: 0;
@@ -1471,9 +1484,9 @@ html[dir=rtl] body.splitlayout > article.detail {
 }
 .popup footer > .button {
   display: block !important;
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  flex: 1;
+  -webkit-box-flex: 1 !important;
+  -webkit-flex: 1 !important;
+  flex: 1 !important;
   height: 100%;
   line-height: 30pt;
   max-width: 320px !important;
@@ -1616,12 +1629,12 @@ html[dir=rtl] .list.deletable > li.selected {
   margin-right: 0 !important;
 }
 html[dir=rtl] .list.deletable > li.selected > .button.delete {
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 html[dir=rtl] .list.deletable > li > .button.delete {
-  -webkit-transform: translate3d(-80px, 0, 0);
-  transform: translate3d(-80px, 0, 0);
+  -webkit-transform: translate3d(-80px, 0, 0) !important;
+  transform: translate3d(-80px, 0, 0) !important;
 }
 html[dir=rtl] .list.showIndicators > li.selected,
 html[dir=rtl] .list.deletable.showIndicators > li.selected {
@@ -1629,8 +1642,8 @@ html[dir=rtl] .list.deletable.showIndicators > li.selected {
 }
 html[dir=rtl] .list.showIndicators > li.selected > .button.delete,
 html[dir=rtl] .list.deletable.showIndicators > li.selected > .button.delete {
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) !important;
 }
 html[dir=rtl] .list.showIndicators > li > .deletion-indicator,
 html[dir=rtl] .list.deletable.showIndicators > li > .deletion-indicator {
@@ -1996,7 +2009,8 @@ html[dir=rtl] .slide-out.open {
 }
 /* ==============================
    Stepper Control
-   =========================== */.stepper {
+   =========================== */
+.stepper {
   display: flex;
   display: -webkit-flex;
   display: -webkit-box;
@@ -2303,9 +2317,9 @@ body.hasTabBar .next:not(.navigable) {
   -webkit-box-align: center;
   -webkit-align-items: center;
   align-items: center;
-  -webkit-box-flex: 1;
-  -webkit-flex: 1;
-  flex: 1;
+  -webkit-box-flex: 1 !important;
+  -webkit-flex: 1 !important;
+  flex: 1 !important;
   color: #929292;
   font-size: 9pt;
   padding: 1px;
