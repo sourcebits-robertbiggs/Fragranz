@@ -68,7 +68,7 @@
         <li>
           <img data-src="{{chosenPerfume.img_prev}}">
           <h3 class="productTitle">{{chosenPerfume.product_title}}</h3>
-          <h4><span class="sku">SKU: {{chosenPerfume.sku}}</span> </h4>
+          <h4><span class="sku">SKU: {{chosenPerfume.sku}}</span></h4>
           <h4 class="counter flush">${{chosenPerfume.wholesale_price}}</h4>
           <p class="longDescription">{{chosenPerfume.long_description}}</p>
         </li>
@@ -76,7 +76,7 @@
     </section>
   </article>
   <div class='toolbar next'>
-    <a href="javascript:void(null)" id='addToCart' data-singletap='cart.addToCart()' class="button add"></a>
+    <a href="javascript:void(null)" id='addToCart' class="button add"></a>
     <a href="javascript:void(null)" data-disabled="{{disabled}}" id="shoppingCart" class="button align-flush"></a>
   </div>
   <nav class="next">
@@ -93,7 +93,6 @@
             <h4>SKU: {{item.sku}}</h4>
           </div>
           <aside><p>Price: ${{item.wholesale_price}}</p></aside>
-          
         </li>
       </ul>
       <h2>Total:</h2>

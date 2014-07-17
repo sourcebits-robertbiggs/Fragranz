@@ -66,7 +66,7 @@
 	settings.eventsPrefix = 'data-';
 	var eventsString = 'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup focus blur change select selectstart scroll copy cut paste mousewheel keypress error contextmenu input textinput drag dragenter dragleave dragover dragend dragstart dragover drop load submit reset search resize beforepaste beforecut beforecopy';
 	eventsString += ' touchstart touchend touchmove touchenter touchleave touchcancel gesturestart gesturechange gestureend';
-	if ($ && $.eventStart !== undefined) {
+	if (window.$ && $.eventStart !== undefined) {
 		eventsString += ' tap singletap doubletap longtap swipe swipeleft swiperight swipeup swipedown';
 	}
 	var eventsArray = eventsString.split(' ');

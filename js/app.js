@@ -57,7 +57,7 @@ $(function () {
 
   $.getJSON('data/perfumes.json', function(data) {
     // Make acquired data available to templates:
-    app.perfumesCollection = app.perfumeGenres.scope.perfumesCollection = data;
+    app.perfumesCollection = data;
     // Render first template:
     app.perfumeGenres.render();
   });
@@ -72,9 +72,9 @@ $(function () {
   //================================================================
   app.perfumeGenres.scope.genres = ['ladies', 'men', 'kids'];
   
-  app.perfumeGenres.scope.getGenre = function(item) {
-    var title = app.perfumesGenreTitle.scope.title = item.target.getAttribute('data-title');
-    var perfumeGenre = item.target.getAttribute('data-genre');
+  app.perfumeGenres.scope.getGenre = function(event) {
+    var title = app.perfumesGenreTitle.scope.title = event.target.getAttribute('data-title');
+    var perfumeGenre = event.target.getAttribute('data-genre');
     //===================================
     // Update the title of the next view:
     //===================================
@@ -90,7 +90,6 @@ $(function () {
     // Update the next template for the chosen genre:
     //===============================================
     app.available_perfumes.render();
-    app.available_perfumes.scope.children = $('#available_perfumes').children();
   };
 
 
@@ -125,6 +124,7 @@ $(function () {
   //===========================================
   app.cart.scope.purchases = app.purchases;
   app.cart.scope.disabled = true;
+  
   app.cart.scope.getTotalItems = function() {
     if (!app.cart.scope.purchases.length) return 0;
     else return app.cart.scope.purchases.length;
