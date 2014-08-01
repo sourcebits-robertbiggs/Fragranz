@@ -37,7 +37,7 @@ $(function () {
 
   // Template for first screen:
   //==========================
-  var PerfumeGenres = function(scope, template, dispatcher) {
+  var FragranceGenres = function(scope, template, dispatcher) {
     // Basic genres of fragrances:
     //============================
     scope.genres = ['ladies', 'men', 'kids'];
@@ -51,7 +51,7 @@ $(function () {
 
   // Template for chosen genre title (second screen):
   //=================================================
-  var PerfumesGenreTitle = function(scope, template, dispatcher) {
+  var FragrancesGenreTitle = function(scope, template, dispatcher) {
     dispatcher.addEventListener('genre-title-update', function(e) {
       scope.title = e.params.title;
       template.render();
@@ -60,38 +60,38 @@ $(function () {
 
   // Template for chosen genre (second screen):
   //==========================================
-  var AvailablePerfumes = function(scope, template, dispatcher) {
+  var AvailableFragrances = function(scope, template, dispatcher) {
     // Listen for when the genre is chosen.
     // Then filter the fragrances by the chosen genre.
     //================================================
     dispatcher.addEventListener('render-chosen-genre', function(e) {
-      var perfumeGenre = e.params.genre;
-      scope.whichPerfumes = FragrancesModel.data.filter(function(item) {
-        return item.genre === perfumeGenre;
+      var fragranceGenre = e.params.genre;
+      scope.whichFragrances = FragrancesModel.data.filter(function(item) {
+        return item.genre === fragranceGenre;
       });
-      template.scope.selectedGenre = scope.whichPerfumes;
+      template.scope.selectedGenre = scope.whichFragrances;
       template.render(); 
     });  
     // Get the data for the fragrance the user chose:
     //===============================================
-    scope.getChosenPerfume = function(e) {
+    scope.getChosenFragrance = function(e) {
       var item = e.target.nodeName === 'LI' ? e.target : $(e.target).closest('li')[0];
       var sku = item.getAttribute('data-sku');
 
       // Get the data for the chose fragrance 
       // for the detail template to render:
       //=====================================
-      var chosenPerfume = scope.whichPerfumes.filter(function(perfume) {
-         return perfume.sku === sku;
+      var chosenFragrance = scope.whichFragrances.filter(function(fragrance) {
+         return fragrance.sku === sku;
       });
 
       // Dispatch event to update product title template:
       //=================================================
-      dispatcher.dispatch('chosen-fragrance-title-update', {product_title: chosenPerfume[0].product_title});
+      dispatcher.dispatch('chosen-fragrance-title-update', {product_title: chosenFragrance[0].product_title});
 
       // Dispatch event with the chosen fragrance:
       //==========================================
-      dispatcher.dispatch('chosen-fragrance-detail', chosenPerfume[0]);
+      dispatcher.dispatch('chosen-fragrance-detail', chosenFragrance[0]);
     };
   };
 
@@ -117,9 +117,9 @@ $(function () {
 
   // Template for detail of chosen frangrance:
   //==========================================
-  var PerfumeDetail = function(scope, template, dispatcher, element) {
+  var FragranceDetail = function(scope, template, dispatcher, element) {
     dispatcher.addEventListener('chosen-fragrance-detail', function(e) {
-      scope.chosenPerfume = e.params;
+      scope.chosenFragrance = e.params;
       $(element).data('chosenFragrance', e.params);
       template.render();
     });
@@ -133,7 +133,7 @@ $(function () {
     // Add chosen fragrance to shopping cart:
     //=======================================
     dispatcher.addEventListener('add-to-cart', function(e) {
-      var chosen = $('#perfumeDetail').data('chosenFragrance');
+      var chosen = $('#fragranceDetail').data('chosenFragrance');
       Kart.addToCart(chosen);
 
       // Dispatch event to update cart
@@ -147,9 +147,9 @@ $(function () {
 
   // Template for back button on cart screen:
   //=========================================
-  var BackToPerfume = function(scope, template, dispatcher) {
+  var BackToFragrance = function(scope, template, dispatcher) {
     dispatcher.addEventListener('update-cart', function(e) {
-      scope.perfumeName = e.params;
+      scope.fragranceName = e.params;
       template.render();
     });
   };
@@ -196,8 +196,8 @@ $(function () {
       var genreTitle = event.target.getAttribute('data-title');
       dispatcher.dispatch('genre-title-update', {title: genreTitle});
       // Pass the chosen genre to the list template:
-      var perfumeGenre = event.target.getAttribute('data-genre');
-      dispatcher.dispatch('render-chosen-genre', {genre: perfumeGenre});
+      var fragranceGenre = event.target.getAttribute('data-genre');
+      dispatcher.dispatch('render-chosen-genre', {genre: fragranceGenre});
     });
   };
 
@@ -295,13 +295,13 @@ $(function () {
 
       // Make Ajax request for JSON data:
       //=================================
-      deferred = $.getJSON('data/perfumes.json', function(data) {
+      deferred = $.getJSON('data/fragrances.json', function(data) {
        FragrancesModel.data = data;
       });
 
       // Define Mediators:
       //==================
-      this.mediators.create(ChosenGenreMediator, $('#perfumeGenres')[0]);
+      this.mediators.create(ChosenGenreMediator, $('#fragranceGenres')[0]);
       this.mediators.create(AddToCartMediator, $('#addToCart')[0]);
       this.mediators.create(GoToCartMediator, $('#shoppingCart')[0]);
       this.mediators.create(PlaceOrderMediator, $('#placeOrder')[0]);
@@ -309,13 +309,13 @@ $(function () {
 
       // Initialize the app's templates:
       //================================
-      this.createTemplate(PerfumeGenres, $('#perfumeGenres')[0]);
-      this.createTemplate(PerfumesGenreTitle, $('#perfumesGenreTitle')[0]);
-      this.createTemplate(AvailablePerfumes, $('#available_perfumes')[0]);
+      this.createTemplate(FragranceGenres, $('#fragranceGenres')[0]);
+      this.createTemplate(FragrancesGenreTitle, $('#fragranceGenreTitle')[0]);
+      this.createTemplate(AvailableFragrances, $('#available_fragrances')[0]);
       this.createTemplate(DetailNavbar, $('#detailNavbar')[0]);
-      this.createTemplate(PerfumeDetail, $('#perfumeDetail')[0]);
+      this.createTemplate(FragranceDetail, $('#fragranceDetail')[0]);
       this.createTemplate(AddToCart, $('#addToCart')[0]);
-      this.createTemplate(BackToPerfume, $('#backToPerfume')[0]);
+      this.createTemplate(BackToFragrance, $('#backToFragrance')[0]);
       this.createTemplate(Cart, $('#cart')[0]);
       this.createTemplate(Confirmation, $('#confirmation')[0]);
     },
