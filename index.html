@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="css/style.css">
     <script type='text/javascript' src='chui/jquery-2.1.1.min.js'></script>
     <script type='text/javascript' src='chui/chui-3.6.1.min.js'></script>
+    <script src="js/soma.js"></script>
     <script src="js/soma-template.js"></script>
     <script type='text/javascript' src='js/app.js'></script>
   </head>
@@ -25,7 +26,7 @@
     <section>
       <h2 class='wrap normal-case'>Choose from one of the categories below to see which fragrances are available.</h2>
       <ul class='list' id='perfumeGenres'>
-        <li class='nav data-cloak' data-singletap='getGenre()' data-goto='perfumeList' data-genre='{{genre}}' data-title='{{capitalize(genre)}}' data-repeat="genre in genres">
+        <li class='nav data-cloak' data-goto='perfumeList' data-genre='{{genre}}' data-title='{{capitalize(genre)}}' data-repeat="genre in genres">
           <h3>{{capitalize(genre)}}</h3>
         </li>
       </ul>
@@ -59,8 +60,8 @@
     </section>
   </article>
   <nav class='next' id='detailNavbar'>
-    <a href='#' class='button back' id='backToGenre'>{{chosenPerfume.product_title}}</a>
-    <h1 id='detailTitle'>{{chosenPerfume.product_title}}</h1>
+    <a href='#' class='button back' id='backToGenre'>{{title}}</a>
+    <h1 id='detailTitle'>{{product_title}}</h1>
   </nav>
   <article class='next' id='detail'>
     <section>
@@ -75,9 +76,9 @@
       </ul>
     </section>
   </article>
-  <div class='toolbar next'>
+  <div class='toolbar next' id='addToCartToolbar'>
     <a href="javascript:void(null)" id='addToCart' class="button add"></a>
-    <a href="javascript:void(null)" data-disabled="{{disabled}}" id="shoppingCart" class="button align-flush"></a>
+    <a href="javascript:void(null)" id="shoppingCart" class="button align-flush"></a>
   </div>
   <nav class="next">
     <a href='#' class='button back' id='backToPerfume'>{{perfumeName}}</a>
@@ -127,7 +128,7 @@
       <h2>Purchase Details:</h2>
       <ul class="list">
         <li data-repeat="item in purchases">
-          <h3>{{item.genreTitle}}: {{item.product_title}}</h3>
+          <h3>{{capitalize(item.genre)}}: {{item.product_title}}</h3>
         </li>
       </ul>
       <h2>Total Amount Charged:</h2>
