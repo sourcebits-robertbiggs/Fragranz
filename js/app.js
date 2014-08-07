@@ -30,6 +30,11 @@ $(function () {
   /////////////////////////////
   var Kart = new ShoppingCartModel();
 
+  // Define new data events:
+  ['tap', 'singletap', 'longtap', 'doubletap', 'swipe', 'swipeleft', 'swiperight', 'swipeup', 'swipedown'].forEach(function(gesture) {
+    soma.template.events['data-' + gesture] = gesture;
+
+  });
 
   /////////////////////////////
   // Define Templates:
@@ -192,10 +197,10 @@ $(function () {
   //=============================
   var ChosenGenreMediator = function(target, dispatcher) {
     $(target).on('singletap', 'li', function(event) {
-      // Pass the chosen genre to the title template:
+      // Send the chosen genre to the title template:
       var genreTitle = event.target.getAttribute('data-title');
       dispatcher.dispatch('genre-title-update', {title: genreTitle});
-      // Pass the chosen genre to the list template:
+      // Send the chosen genre to the list template:
       var fragranceGenre = event.target.getAttribute('data-genre');
       dispatcher.dispatch('render-chosen-genre', {genre: fragranceGenre});
     });
