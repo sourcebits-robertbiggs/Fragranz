@@ -1580,7 +1580,6 @@
 	soma.template.parseEvents = parseEvents;
 	soma.template.clearEvents = clearEvents;
 	soma.template.ready = ready;
-	soma.template.events = events;
 
 	// register for AMD module
 	if (typeof define === 'function' && typeof define.amd !== 'undefined') {

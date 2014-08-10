@@ -32,7 +32,7 @@ $(function () {
 
   // Define new data events:
   ['tap', 'singletap', 'longtap', 'doubletap', 'swipe', 'swipeleft', 'swiperight', 'swipeup', 'swipedown'].forEach(function(gesture) {
-    soma.template.events['data-' + gesture] = gesture;
+    soma.template.settings.events['data-' + gesture] = gesture;
 
   });
 
