@@ -15,6 +15,14 @@ $(function () {
   app.perfumesCollection;
 
 
+  //////////////////////////
+  // Define new data events:
+  //////////////////////////
+  ['tap', 'singletap', 'longtap', 'doubletap', 'swipe', 'swipeleft', 'swiperight', 'swipeup', 'swipedown'].forEach(function(gesture) {
+    soma.template.settings.events['data-' + gesture] = gesture;
+
+  });
+
   //=================================
   // Define a template helper.
   // Capitalize first letter of word:
