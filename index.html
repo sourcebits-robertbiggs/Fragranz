@@ -16,6 +16,11 @@
     <script type='text/javascript' src='chui/chui-3.6.1.min.js'></script>
     <script src="js/soma-template.js"></script>
     <script type='text/javascript' src='js/app.js'></script>
+    <style>
+      .popup > .panel h1 {
+        margin-left: 0 !important;
+      }
+    </style>
   </head>
   <body>
   <nav class='current'>
@@ -35,8 +40,8 @@
     </section>
   </article> 
   <nav class='next'>
-    <a href='#' class='button back'>Perfumes</a>
-    <h1 id='perfumesGenreTitle'>{{title}}</h1>
+    <a href='#' class='button back'>Fragrances</a>
+    <h1 id='fragrancesGenreTitle'>{{title}}</h1>
   </nav> 
   <article class='next' id='perfumeList'>
     <section>
@@ -59,8 +64,8 @@
     </section>
   </article>
   <nav class='next' id='detailNavbar'>
-    <a href='#' class='button back' id='backToGenre'>{{chosenPerfume.product_title}}</a>
-    <h1 id='detailTitle'>{{chosenPerfume.product_title}}</h1>
+    <a href='#' class='button back' id='backToGenre'>{{genre_title}}</a>
+    <h1 id='detailTitle'>{{product_title}}</h1>
   </nav>
   <article class='next' id='detail'>
     <section>

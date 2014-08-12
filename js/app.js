@@ -1,6 +1,5 @@
 $(function () {
 
-
   /////////////////
   // Initial setup.
   /////////////////
@@ -49,7 +48,7 @@ $(function () {
   // without having to define them individually.
   //============================================== 
   app.perfumeGenres = soma.template.create($('#perfumeGenres')[0]);
-  app.perfumesGenreTitle = soma.template.create($('#perfumesGenreTitle')[0]);
+  app.fragrancesGenreTitle = soma.template.create($('#fragrancesGenreTitle')[0]);
   app.available_perfumes = soma.template.create($('#available_perfumes')[0]);
   app.detailNavbar = soma.template.create($('#detailNavbar')[0]);
   app.perfumeDetail = soma.template.create($('#perfumeDetail')[0]);
@@ -63,12 +62,13 @@ $(function () {
   // Get the data to be displayed:
   //==============================
 
-  $.getJSON('data/perfumes.json', function(data) {
-    // Make acquired data available to templates:
-    app.perfumesCollection = data;
-    // Render first template:
-    app.perfumeGenres.render();
-  });
+  $.getJSON('data/perfumes.json')
+    .then(function(data) {
+      // Make acquired data available to templates:
+      app.perfumesCollection = data;
+      // Render first template:
+      app.perfumeGenres.render();
+    });
 
 
   //================================================================
@@ -81,25 +81,37 @@ $(function () {
   app.perfumeGenres.scope.genres = ['ladies', 'men', 'kids'];
   
   app.perfumeGenres.scope.getGenre = function(event) {
-    var title = app.perfumesGenreTitle.scope.title = event.target.getAttribute('data-title');
     var perfumeGenre = event.target.getAttribute('data-genre');
-    //===================================
-    // Update the title of the next view:
-    //===================================
-    app.perfumesGenreTitle.render();
     //=============================================
     // Filter the data based on the user selection:
     //=============================================
     var whichPerfumes = app.perfumesCollection.filter(function(item) {
       return item.genre === perfumeGenre;
-    })
-    app.available_perfumes.scope.selectedGenre = whichPerfumes;
-    //===============================================
-    // Update the next template for the chosen genre:
-    //===============================================
-    app.available_perfumes.render();
+    });
+    // Publish events for chosen genre and title of genre:
+    //===================================================
+    $.publish('chosen-genre-title', event.target.getAttribute('data-title'));
+    $.publish('chosen-genre', whichPerfumes);
   };
 
+  //==========================================
+  // ChosenGenreMediator
+  // Update the template for the chosen genre:
+  //==========================================
+  var ChosenGenreMediator = $.subscribe('chosen-genre', function(topic, genre) {
+    app.available_perfumes.scope.selectedGenre = genre;
+    app.available_perfumes.render();
+    app.fragrancesGenreTitle.render();
+  }); 
+
+  //===================================================
+  // FragrancesGenreTitleMediator
+  // Update title of genre list to reflect user choice:
+  //===================================================
+  var FragrancesGenreTitleMediator = $.subscribe('chosen-genre-title', function(topic, title){
+    app.fragrancesGenreTitle.scope.title = title;
+    app.fragrancesGenreTitle.render();
+  });
 
   //================================================
   // Get the chosen perfume and render its template:
@@ -112,18 +124,26 @@ $(function () {
     });
 
     //=========================
-    // Update the navbar title:
+    // Notify the navbar title:
     //=========================
-    app.detailNavbar.scope.chosenPerfume = chosenPerfume[0];
-    app.detailNavbar.scope.chosenPerfume.genreTitle = app.perfumesGenreTitle.scope.title;
+    $.publish('chosen-fragrance', {title: app.fragrancesGenreTitle.scope.title, fragrance: chosenPerfume[0]});
+  };
+
+  //================================================
+  // ChosenPerfumeMediator
+  // Update the detail view to show the user choice:
+  //================================================
+  var ChosenPerfumeMediator = $.subscribe('chosen-fragrance', function(topic, choice) {
+    app.detailNavbar.scope.genre_title = choice.title;
+    app.detailNavbar.scope.product_title = choice.fragrance.product_title;
     app.detailNavbar.render();
 
     //========================
     // Update the detail view:
     //========================
-    app.perfumeDetail.scope.chosenPerfume = chosenPerfume[0];
+    app.perfumeDetail.scope.chosenPerfume = choice.fragrance;
     app.perfumeDetail.render();
-  };
+  });
 
 
   //===========================================
@@ -151,8 +171,6 @@ $(function () {
   };    
 
 
-
-
   ///////////////////////////
   // Setup User Interactions:
   ///////////////////////////
@@ -162,14 +180,32 @@ $(function () {
   //======================
   $('#addToCart').on('singletap', function() {
     $.UIGoToArticle('#cart');
-    // Update cart with added perfume data:
-    app.perfumeDetail.scope.chosenPerfume.genreTitle = app.perfumesGenreTitle.scope.title;
-    // Render cart template:
+    $.publish('add-to-cart', {
+      title: app.fragrancesGenreTitle.scope.title,
+      chosenPerfume: app.perfumeDetail.scope.chosenPerfume
+    });
+    $.publish('update-backTo-button', app.perfumeDetail.scope.chosenPerfume.product_title);
+  });
+
+
+  //===================================
+  // AddToCartMediator
+  // Update cart with chosen fragrance:
+  //===================================
+  var AddToCartMediator = $.subscribe('add-to-cart', function(topic, fragrance) {
+    app.perfumeDetail.scope.chosenPerfume.genreTitle = fragrance.title;
     app.cart.scope.purchases.push(app.perfumeDetail.scope.chosenPerfume);
     app.cart.scope.disabled = false;
     app.cart.render();
-    // Update 'Back Button' text template:
-    app.backToPerfume.scope.perfumeName = app.perfumeDetail.scope.chosenPerfume.product_title;
+  });
+
+
+  //===================================
+  // UpdateBackToButtonMediator
+  // Update cart with chosen fragrance:
+  //===================================
+  var UpdateBackToButtonMediator = $.subscribe('update-backTo-button', function(topic, title) {
+    app.backToPerfume.scope.perfumeName = title;
     app.backToPerfume.render();
   });
 
@@ -206,9 +242,18 @@ $(function () {
     $.UIGoToArticle('#confirmation');
     // Create a uuid for the order:
     $('#confirmationNum').text($.Uuid());
-    // Update the confirmation view template:
-    app.confirmation.scope.purchases = app.cart.scope.purchases;
-    app.confirmation.render();
+    // Publish update for confirmation view:
+    $.publish('update-confirmation-view', app.cart.scope.purchases);
+  });
+
+  //================================
+  // UpdateConfirmationMediator
+  // Update the confirmation page
+  // with items chosen for purchase:
+  //================================
+  var UpdateConfirmationMediator = $.subscribe('update-confirmation-view', function(topic, purchases) {
+      app.confirmation.scope.purchases = purchases;
+      app.confirmation.render();
   });
 
   //==============
@@ -220,5 +265,6 @@ $(function () {
     // Reset the shopping cart:
     app.cart.scope.purchases = [];
     app.cart.render();
-  });  
+  }); 
+   
 });
