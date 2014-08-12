@@ -150,7 +150,7 @@ $(function () {
   // Calculate how many items have been chosen.
   // This is used in the shopping cart:
   //===========================================
-  app.cart.scope.purchases = app.purchases;
+  app.cart.scope.purchases = [];
   app.cart.scope.disabled = true;
   
   app.cart.scope.getTotalItems = function() {
