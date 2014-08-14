@@ -29,8 +29,8 @@
   <article id='main' class='current'>
     <section>
       <h2 class='wrap normal-case'>Choose from one of the categories below to see which fragrances are available.</h2>
-      <ul class='list' id='perfumeGenres'>
-        <li class='nav data-cloak' data-singletap='getGenre()' data-goto='perfumeList' data-genre='{{genre}}' data-title='{{capitalize(genre)}}' data-repeat="genre in genres">
+      <ul class='list' id='fragranceGenres'>
+        <li class='nav data-cloak' data-singletap='getGenre()' data-goto='fragranceList' data-genre='{{genre}}' data-title='{{capitalize(genre)}}' data-repeat="genre in genres">
           <h3>{{capitalize(genre)}}</h3>
         </li>
       </ul>
@@ -43,20 +43,20 @@
     <a href='#' class='button back'>Fragrances</a>
     <h1 id='fragrancesGenreTitle'>{{title}}</h1>
   </nav> 
-  <article class='next' id='perfumeList'>
+  <article class='next' id='fragranceList'>
     <section>
-      <ul class='list' id='available_perfumes'>
-        <li data-sku='{{perfume.sku}}' data-singletap='getChosenPerfume()' class='comp' data-repeat='perfume in selectedGenre' data-goto='detail'>
+      <ul class='list' id='available_fragrances'>
+        <li data-sku='{{fragrance.sku}}' data-singletap='getChosenFragrance()' class='comp' data-repeat='fragrance in selectedGenre' data-goto='detail'>
           <aside>
-            <img width='60' data-src='{{perfume.img_prev}}'>
+            <img width='60' data-src='{{fragrance.img_prev}}'>
           </aside>
           <div>
-            <h3 class='productTitle'>{{perfume.product_title}}</h3>
-            <h4>{{perfume.sku}}</h4>
-            <h4>{{perfume.short_description}}</h4>
+            <h3 class='productTitle'>{{fragrance.product_title}}</h3>
+            <h4>{{fragrance.sku}}</h4>
+            <h4>{{fragrance.short_description}}</h4>
           </div>
           <aside>
-            <span class='counter'>${{perfume.wholesale_price}}</span>
+            <span class='counter'>${{fragrance.wholesale_price}}</span>
             <span class='show-detail'></span>
           </aside>
         </li>
@@ -69,13 +69,13 @@
   </nav>
   <article class='next' id='detail'>
     <section>
-      <ul class='list' id='perfumeDetail'>
+      <ul class='list' id='fragranceDetail'>
         <li>
-          <img data-src="{{chosenPerfume.img_prev}}">
-          <h3 class="productTitle">{{chosenPerfume.product_title}}</h3>
-          <h4><span class="sku">SKU: {{chosenPerfume.sku}}</span></h4>
-          <h4 class="counter flush">${{chosenPerfume.wholesale_price}}</h4>
-          <p class="longDescription">{{chosenPerfume.long_description}}</p>
+          <img data-src="{{chosenFragrance.img_prev}}">
+          <h3 class="productTitle">{{chosenFragrance.product_title}}</h3>
+          <h4><span class="sku">SKU: {{chosenFragrance.sku}}</span></h4>
+          <h4 class="counter flush">${{chosenFragrance.wholesale_price}}</h4>
+          <p class="longDescription">{{chosenFragrance.long_description}}</p>
         </li>
       </ul>
     </section>
@@ -85,7 +85,7 @@
     <a href="javascript:void(null)" data-disabled="{{disabled}}" id="shoppingCart" class="button align-flush"></a>
   </div>
   <nav class="next">
-    <a href='#' class='button back' id='backToPerfume'>{{perfumeName}}</a>
+    <a href='#' class='button back' id='backToFragrance'>{{fragranceName}}</a>
     <h1>Cart</h1>
   </nav>
   <article id="cart" class="next">

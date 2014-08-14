@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mediators</title>    
+  <link rel="stylesheet" href="chui/chui-ios-3.6.1.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script type='text/javascript' src='chui/jquery-2.1.1.min.js'></script>
+  <script type='text/javascript' src='chui/chui-3.6.1.min.js'></script>
+  <script src="js/soma-template.js"></script>
+</head>
+<body>
+  <nav class='current'>
+    <h1 id='mainTitle'>Mediators</h1>
+  </nav>   
+  <article id='main' class='current'> 
+    <section> 
+      <!-- First template: list of items -->
+      <h2>Available Items</h2>
+      <ul class='list' id='availableItems'>
+        <li data-repeat='item in items' data-click='getItem(item)'>
+          <h3>{{item.name}}</h3>
+          <h4>${{item.price}}</h4>
+        </li>
+      </ul>
+      <!-- Second template: selected item-->
+      <h2>Chosen Item</h2>
+      <ul class="list" id='chosenItem'>
+        <li class='data-cloak'>
+          <h3>{{item.name}}: ${{item.price}}<h3>
+        </li>
+      </ul>
+    </section>
+  </article>
+  <script>
+    (function(window) {
+    ///////////////////////////////////////
+    // Here's the array of items we'll use:
+    ///////////////////////////////////////
+    var items = [
+      {
+        name: 'Apple',
+        price: '1.00'
+      },
+      {
+        name: 'Orange',
+        price: '1.25'
+      },
+      {
+        name: 'Banana',
+        price: '1.00'
+      },
+      {
+        name: 'Pear',
+        price: '1.15'
+      }
+    ];
+
+    ////////////////////////////////
+    // Initialize our app namespace:
+    ////////////////////////////////
+    var app = window.app ? window.app : {};
+
+    ////////////////////////////////
+    // Initialize the two templates.
+    ////////////////////////////////
+    app.availableItems = soma.template.create(document.querySelector('#availableItems'));
+    app.chosenItem = soma.template.create(document.querySelector('#chosenItem'));
+
+    /////////////////////////////////////////////////
+    // Bind data to the first template and render it.
+    /////////////////////////////////////////////////
+    app.availableItems.scope.items = items;
+    app.availableItems.render();
+
+    ////////////////////////////////////////////
+    // Define the scoped method for the
+    // `data-click` event on the first template.
+    ////////////////////////////////////////////
+    app.availableItems.scope.getItem = function(event, item) {
+      //===================================================
+      // Publish a broadcast with the selected item object:
+      //===================================================
+      $.publish('selected-item', item);
+    };
+
+    //////////////////////////////////////////////
+    // Define a mediator for the second template. 
+    // This will listen for any broadcast and 
+    // update the template with the captured data.
+    //////////////////////////////////////////////
+    app.ChosenItemMediator = $.subscribe('selected-item', function(event, item) {
+      app.chosenItem.scope.item = item;
+      app.chosenItem.render();
+    });
+
+    })(window);
+  </script>
+</body>
+</html>
