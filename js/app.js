@@ -122,9 +122,9 @@ $(function () {
        return fragrance.sku === sku;
     });
 
-    //=========================
-    // Notify the navbar title:
-    //=========================
+    //=================================
+    // Notify the navigation bar title:
+    //=================================
     $.publish('chosen-fragrance', {title: app.fragrancesGenreTitle.scope.title, fragrance: chosenFragrance[0]});
   };
 
